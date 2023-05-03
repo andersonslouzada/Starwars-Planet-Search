@@ -19,7 +19,7 @@ export default function PlanetsProvider({ children }) {
   }, []);
 
   return (
-    isLoading ? <p>Carregando</p>
+    isLoading ? <p>Loading...</p>
       : (
         <PlanetsContext.Provider value={ { planets } }>
           <div>

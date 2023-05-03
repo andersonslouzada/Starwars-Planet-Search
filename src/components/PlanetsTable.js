@@ -25,7 +25,7 @@ export default function PlanetsTable() {
           </tr>
         </thead>
         <tbody>
-          { planets ? (
+          { planets && (
             planets.map((planet) => (
               <tr key={ planet.name }>
                 <td>{ planet.name }</td>
@@ -43,10 +43,6 @@ export default function PlanetsTable() {
                 <td>{ planet.url }</td>
               </tr>
             ))
-          ) : (
-            <tr>
-              <td colSpan="13">Loading...</td>
-            </tr>
           )}
         </tbody>
       </table>
