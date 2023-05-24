@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import PlanetsContext from './PlanetsContext';
 
 export default function PlanetsProvider({ children }) {
+  const [nameFilter, setNameFilter] = useState('');
   const [planets, setPlanets] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -21,7 +22,7 @@ export default function PlanetsProvider({ children }) {
   return (
     isLoading ? <p>Loading...</p>
       : (
-        <PlanetsContext.Provider value={ { planets } }>
+        <PlanetsContext.Provider value={ { planets, nameFilter, setNameFilter } }>
           <div>
             { children }
           </div>

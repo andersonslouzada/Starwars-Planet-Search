@@ -2,10 +2,23 @@ import React, { useContext } from 'react';
 import PlanetsContext from '../contexts/PlanetsContext';
 
 export default function PlanetsTable() {
-  const { planets } = useContext(PlanetsContext);
+  const { planets, nameFilter, setNameFilter } = useContext(PlanetsContext);
+
+  const handleNameFilterChange = (event) => {
+    setNameFilter(event.target.value);
+  };
+
+  const filteredPlanets = planets
+    .filter((planet) => planet.name.toLowerCase().includes(nameFilter.toLowerCase()));
 
   return (
     <div>
+      <input
+        data-testid="name-filter"
+        placeholder="search name"
+        name={ nameFilter }
+        onChange={ handleNameFilterChange }
+      />
       <table>
         <thead>
           <tr>
@@ -25,8 +38,8 @@ export default function PlanetsTable() {
           </tr>
         </thead>
         <tbody>
-          { planets && (
-            planets.map((planet) => (
+          { filteredPlanets && (
+            filteredPlanets.map((planet) => (
               <tr key={ planet.name }>
                 <td>{ planet.name }</td>
                 <td>{ planet.rotation_period }</td>
