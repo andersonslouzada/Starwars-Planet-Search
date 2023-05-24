@@ -10,6 +10,13 @@ export default function PlanetsTable() {
   });
   const [filteredPlanets, setFilteredPlanets] = useState([]);
   const [appliedFilters, setAppliedFilters] = useState([]);
+  const [availableColumns, setAvailableColumns] = useState([
+    'population',
+    'orbital_period',
+    'diameter',
+    'rotation_period',
+    'surface_water',
+  ]);
 
   useEffect(() => {
     let filteredData = planets;
@@ -61,12 +68,35 @@ export default function PlanetsTable() {
     };
 
     setAppliedFilters((prevFilters) => [...prevFilters, newFilter]);
+
+    setAvailableColumns((prevColumns) => prevColumns
+      .filter((column) => column !== filters.column));
+
+    const nextColumn = availableColumns[0];
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      column: nextColumn,
+    }));
   };
 
   const removeFilter = (index) => {
+    const removedColumn = appliedFilters[index].column;
     const updatedFilters = [...appliedFilters];
     updatedFilters.splice(index, 1);
     setAppliedFilters(updatedFilters);
+
+    setAvailableColumns((prevColumns) => prevColumns.concat(removedColumn).sort());
+  };
+
+  const removeAllFilters = () => {
+    setAppliedFilters([]);
+    setAvailableColumns([
+      'population',
+      'orbital_period',
+      'diameter',
+      'rotation_period',
+      'surface_water',
+    ]);
   };
 
   return (
@@ -83,11 +113,14 @@ export default function PlanetsTable() {
         value={ filters.column }
         onChange={ handleChange }
       >
-        <option value="population">population</option>
-        <option value="orbital_period">orbital_period</option>
-        <option value="diameter">diameter</option>
-        <option value="rotation_period">rotation_period</option>
-        <option value="surface_water">surface_water</option>
+        {availableColumns.map((column) => (
+          <option
+            key={ column }
+            value={ column }
+          >
+            {column}
+          </option>
+        ))}
       </select>
 
       <select
@@ -112,9 +145,14 @@ export default function PlanetsTable() {
       <button data-testid="button-filter" onClick={ handleFilterClick }>
         Filter
       </button>
+
+      <button data-testid="button-remove-filters" onClick={ removeAllFilters }>
+        Remove all filters
+      </button>
+
       <div>
         {appliedFilters.map((filter, index) => (
-          <div key={ index }>
+          <div data-testid="filter" key={ index }>
             <span>{`${filter.column} ${filter.comparison} ${filter.value}`}</span>
             <button onClick={ () => removeFilter(index) }>Remover</button>
           </div>
