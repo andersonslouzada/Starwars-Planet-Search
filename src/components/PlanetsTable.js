@@ -18,31 +18,38 @@ export default function PlanetsTable() {
     'surface_water',
   ]);
 
+  const applyFilter = (planet, filter) => {
+    if (filter.column && filter.comparison && filter.value !== '') {
+      const filterNumber = parseFloat(filter.value);
+      const operations = {
+        'maior que': (planetValue, filterValue) => planetValue > filterValue,
+        'menor que': (planetValue, filterValue) => planetValue < filterValue,
+        'igual a': (planetValue, filterValue) => planetValue === filterValue,
+      };
+
+      const planetValue = parseFloat(planet[filter.column]);
+      const operation = operations[filter.comparison];
+
+      if (operation) {
+        return operation(planetValue, filterNumber);
+      }
+    }
+  };
+
+  const filterByName = (planet, filterName) => {
+    const planetName = planet.name;
+    return planetName && planetName.toLowerCase().includes(filterName?.toLowerCase());
+  };
+
   useEffect(() => {
     let filteredData = planets;
 
-    appliedFilters.forEach((filter) => {
-      if (filter.column && filter.comparison && filter.value !== '') {
-        const filterNumber = parseFloat(filter.value);
+    if (appliedFilters.length > 0) {
+      filteredData = filteredData.filter((planet) => appliedFilters
+        .every((filter) => applyFilter(planet, filter)));
+    }
 
-        if (filter.comparison === 'maior que') {
-          filteredData = filteredData.filter(
-            (planet) => parseFloat(planet[filter.column]) > filterNumber,
-          );
-        } else if (filter.comparison === 'menor que') {
-          filteredData = filteredData.filter(
-            (planet) => parseFloat(planet[filter.column]) < filterNumber,
-          );
-        } else if (filter.comparison === 'igual a') {
-          filteredData = filteredData.filter(
-            (planet) => parseFloat(planet[filter.column]) === filterNumber,
-          );
-        }
-      }
-    });
-
-    filteredData = filteredData.filter((planet) => planet.name
-      .toLowerCase().includes(nameFilter.toLowerCase()));
+    filteredData = filteredData.filter((planet) => filterByName(planet, nameFilter));
 
     setFilteredPlanets(filteredData);
   }, [planets, nameFilter, appliedFilters]);
@@ -154,7 +161,13 @@ export default function PlanetsTable() {
         {appliedFilters.map((filter, index) => (
           <div data-testid="filter" key={ index }>
             <span>{`${filter.column} ${filter.comparison} ${filter.value}`}</span>
-            <button onClick={ () => removeFilter(index) }>Remover</button>
+            <button
+              data-testid="button-remove-filter"
+              onClick={ () => removeFilter(index) }
+            >
+              Remover
+
+            </button>
           </div>
         ))}
       </div>
@@ -178,7 +191,7 @@ export default function PlanetsTable() {
         </thead>
         <tbody>
           {filteredPlanets.map((planet) => (
-            <tr key={ planet.name }>
+            <tr key={ planet.name } data-testid="planet-row">
               <td>{planet.name}</td>
               <td>{planet.rotation_period}</td>
               <td>{planet.orbital_period}</td>

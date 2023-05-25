@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import PlanetsContext from './PlanetsContext';
 
@@ -27,7 +27,8 @@ export default function PlanetsProvider({ children }) {
             { children }
           </div>
         </PlanetsContext.Provider>
-      ));
+      )
+  );
 }
 
 PlanetsProvider.propTypes = {
